@@ -1,0 +1,7 @@
+{
+    "serverPort": 8910,
+    "readTimeout": 5000,
+    "writeTimeout":5000,
+    "endpoints": ["47.93.208.134:2379"],
+    "DialTimeout": 3000
+}
