@@ -132,8 +132,10 @@ Err:
 }
 func InitApiServer() (err error) {
 	var (
-		serverMux  *http.ServeMux
-		httpServer *http.Server
+		serverMux        *http.ServeMux
+		httpServer       *http.Server
+		staticDir        http.Dir
+		staticFileHandle http.Handler
 	)
 	// 定义一个多路转换器，相当于路由
 	serverMux = http.NewServeMux()
@@ -143,6 +145,11 @@ func InitApiServer() (err error) {
 	serverMux.HandleFunc("/cron/job/delete", handleJobDel)
 	serverMux.HandleFunc("/cron/job/list", handleJobList)
 	serverMux.HandleFunc("/cron/job/kill", handleJobKill)
+
+	//静态文件目录
+	staticDir = http.Dir("./webroot")
+	staticFileHandle = http.FileServer(staticDir)
+	serverMux.Handle("/", http.StripPrefix("/", staticFileHandle))
 
 	// 定义1个http server
 	httpServer = &http.Server{
