@@ -123,7 +123,7 @@ func (JobMgr *JobMgr) KillJob(name string) (err error) {
 		leaseID       clientv3.LeaseID
 		// putRes        *clientv3.PutResponse
 	)
-	key = common.JOB_KILLER_DIR + name
+	key = common.JOB_KILL_DIR + name
 
 	// 申请租约，设置1s后自动删除该key
 	if leaseGraneRes, err = GOL_JOBMGR.lease.Grant(context.TODO(), 1); err != nil {
