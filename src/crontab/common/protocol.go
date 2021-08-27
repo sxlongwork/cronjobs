@@ -67,6 +67,41 @@ type JobExcuteResult struct {
 }
 
 /*
+日志结构
+*/
+type LogRecord struct {
+	JobName        string        `json:"jobName"`
+	Command        string        `json:"command"`
+	OutPut         string        `json:"outPut"`
+	Err            string        `json:"err"`
+	JobPlanTime    time.Duration `json:"jobPlanTime"`
+	JobSchduleTime time.Duration `josn:"jobSchduleTime"`
+	JobExcuteTime  time.Duration `json:"jobExcuteTime"`
+	JobEndTime     time.Duration `json:"jobEndTime"`
+}
+
+// 批量日志
+type LogBatch struct {
+	Logs []interface{}
+}
+
+/*
+构建日志记录结构体
+*/
+func BuildLogRecord(jobResult *JobExcuteResult) (jobRecord *LogRecord) {
+	jobRecord = &LogRecord{
+		JobName:        jobResult.JobState.Job.JobName,
+		Command:        jobResult.JobState.Job.Command,
+		OutPut:         string(jobResult.OutPut),
+		JobPlanTime:    time.Duration(jobResult.JobState.JobPlanStartTime.UnixNano() / 1000 / 1000),
+		JobSchduleTime: time.Duration(jobResult.JobState.JobRealStartTime.UnixNano() / 1000 / 1000),
+		JobExcuteTime:  time.Duration(jobResult.StartTime.UnixNano() / 1000 / 1000),
+		JobEndTime:     time.Duration(jobResult.EndTime.UnixNano() / 1000 / 1000),
+	}
+	return
+}
+
+/*
 构建job任务执行状态
 */
 func BuildJobState(jobplan SchduleJobPlan) (jobState *JobExecuteState) {

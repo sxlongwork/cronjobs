@@ -116,9 +116,25 @@ func (schdule *SchduleJob) trySchdule() time.Duration {
 处理任务执行结果
 */
 func (schdule *SchduleJob) handleJobResult(jobResult *common.JobExcuteResult) {
+	var (
+		jobRecord *common.LogRecord
+	)
 	// 任务执行完成从执行map中删除
 	delete(schdule.JobStates, jobResult.JobState.Job.JobName)
 	fmt.Println(jobResult.JobState.Job.JobName, "执行完成，执行结果=", string(jobResult.OutPut), "执行错误=", jobResult.Err.Error())
+	// 将任务执行结果生成对应日志记录
+	if jobResult.Err != common.TRY_LOCK_ERROR {
+		jobRecord = common.BuildLogRecord(jobResult)
+	}
+	if jobResult.Err != nil {
+		jobRecord.Err = jobResult.Err.Error()
+	} else {
+		jobRecord.Err = ""
+	}
+
+	// 将日志记录推送给日志协程处理，写入mongodb
+	GOL_LOGRECOEDMGR.PutJobLog(jobRecord)
+
 }
 
 /*

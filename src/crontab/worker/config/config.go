@@ -10,8 +10,14 @@ var (
 )
 
 type Config struct {
-	Endpoints   []string `json:"endpoints"`
-	DialTimeout int      `json:"dailTimeout"`
+	Endpoints             []string `json:"endpoints"`
+	DialTimeout           int      `json:"dailTimeout"`
+	MongodbUrl            string   `json:"mongodbUrl"`
+	MongodbTimeout        int      `json:"mongodbTimeout"`
+	MongodbName           string   `json:"mongodbName"`
+	MongodbCollectionName string   `json:"mongodbCollectionName"`
+	LogBatchCount         int      `json:"logBatchCount"`
+	AutoCommitLogTime     int      `json:"autoCommitLogTime"`
 }
 
 func InitConfig(path string) (err error) {

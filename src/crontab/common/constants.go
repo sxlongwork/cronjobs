@@ -1,7 +1,5 @@
 package common
 
-import "errors"
-
 const (
 	JOB_SAVE_DIR string = "/cron/job/"
 	JOB_KILL_DIR string = "/cron/kill/"
@@ -14,6 +12,3 @@ const (
 	// 任务锁前缀
 	JOB_LOCK_PREFIX string = "/cron/lock/"
 )
-
-// 上锁失败错误
-var TRY_LOCK_ERROR = errors.New("锁已被占用")
