@@ -19,13 +19,16 @@ type LogMgr struct {
 	autoCommit chan *common.LogBatch
 }
 
+/*
+批量保存日志到mongodb
+*/
 func (logMgr *LogMgr) saveBatchLogs(logs *common.LogBatch) {
 	// 批量写入mongodb
 	logMgr.collection.InsertMany(context.TODO(), logs.Logs)
 }
 
 /*
-写日志协程
+写日志协程，监听日志管道
 */
 func (logMgr *LogMgr) scanLogRecord() {
 	var (
@@ -58,6 +61,7 @@ func (logMgr *LogMgr) scanLogRecord() {
 				timer.Stop()
 			}
 		case oldLogBatch = <-logMgr.autoCommit: // 提交过期的logbatch
+			// 防止切片放满自动提交的时候，刚好定时器也到时间了可能会出现的重复提交
 			if oldLogBatch != logs {
 				// 如果已经提交了，则跳过
 				continue
@@ -89,7 +93,7 @@ func InitLogMgr() (err error) {
 		collection: col,
 		autoCommit: make(chan *common.LogBatch, 1000),
 	}
-
+	// 启动日志记录管道
 	go GOL_LOGRECOEDMGR.scanLogRecord()
 	return
 }

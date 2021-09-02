@@ -14,6 +14,9 @@ var (
 type JobExcutor struct {
 }
 
+/*
+执行任务
+*/
 func (excutor *JobExcutor) ExcuteJob(jobExcuteState *common.JobExecuteState) {
 	var (
 		cmd             *exec.Cmd

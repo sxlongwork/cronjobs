@@ -147,8 +147,9 @@ func (schdule *SchduleJob) scanJobsLoop() {
 		timer     *time.Timer
 		jobResult *common.JobExcuteResult
 	)
-	//初始化尝试执行任务
+	//初始化尝试调度任务，获取下次距离下次调度的等待时间
 	waitTime = schdule.trySchdule()
+
 	timer = time.NewTimer(waitTime)
 	for {
 		select {
@@ -192,10 +193,16 @@ func InitSchduleMgr() {
 	go GOL_SCHDULE.scanJobsLoop()
 }
 
+/*
+保存任务事件(新增/修改/删除)
+*/
 func (schdule *SchduleJob) PutJobEvent(jobevent *common.JobEvent) {
 	schdule.JobEvents <- jobevent
 }
 
+/*
+保存任务执行结果
+*/
 func (schdule *SchduleJob) PutJobExcuteResult(jobResult *common.JobExcuteResult) {
 	schdule.JobResult <- jobResult
 }

@@ -18,6 +18,9 @@ type JobMgr struct {
 
 var GOL_JOBMGR *JobMgr
 
+/*
+任务管理器初始化
+*/
 func InitJobMgr() (err error) {
 	var (
 		cfg     clientv3.Config
@@ -42,8 +45,10 @@ func InitJobMgr() (err error) {
 		lease:   lease,
 		watcher: watcher,
 	}
-	go GOL_JOBMGR.WatchJobs()
-	go GOL_JOBMGR.watchKillJob()
+	// 启动监听新增/修改/删除任务协程
+	GOL_JOBMGR.WatchJobs()
+	// 启动监听杀死任务协程
+	GOL_JOBMGR.watchKillJob()
 
 	return
 }
@@ -53,6 +58,9 @@ func (jobMgr *JobMgr) CreateLock(jobname string) (lock *JobLock) {
 	return
 }
 
+/*
+监听/cron/job/下的任务变化，新增/修改/删除
+*/
 func (jobMgr *JobMgr) WatchJobs() (err error) {
 	var (
 		getRes    *clientv3.GetResponse
@@ -64,6 +72,7 @@ func (jobMgr *JobMgr) WatchJobs() (err error) {
 		jobEvent  *common.JobEvent
 		jobName   string
 	)
+
 	if getRes, err = GOL_JOBMGR.client.Get(context.TODO(), common.JOB_SAVE_DIR, clientv3.WithPrefix()); err != nil {
 		return
 	}
@@ -73,7 +82,6 @@ func (jobMgr *JobMgr) WatchJobs() (err error) {
 			return
 		}
 		// 将job推送给调度协程
-		// TODO
 		jobEvent = common.BuildJobEvent(common.JOB_PUT_EVENT, job)
 		GOL_SCHDULE.PutJobEvent(jobEvent)
 		// fmt.Println("jobevent:", jobEvent.Job.JobName)
@@ -112,6 +120,9 @@ func (jobMgr *JobMgr) WatchJobs() (err error) {
 
 }
 
+/*
+监听/cron/kill/目录，put操作杀死任务，delete操作忽略
+*/
 func (jobMgr *JobMgr) watchKillJob() (err error) {
 	var (
 		watchChan clientv3.WatchChan

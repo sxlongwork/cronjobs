@@ -26,11 +26,11 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// 初始化执行器
+	// 初始化任务执行器
 	if err = worker.InitJobExcutor(); err != nil {
 		fmt.Println(err)
 	}
-	// 初始化调度器
+	// 初始化任务调度器
 	worker.InitSchduleMgr()
 
 	// 初始化jobMgr, 启动监听
