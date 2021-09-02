@@ -76,13 +76,23 @@ type LogRecord struct {
 	Err            string        `json:"err"`
 	JobPlanTime    time.Duration `json:"jobPlanTime"`
 	JobSchduleTime time.Duration `josn:"jobSchduleTime"`
-	JobExcuteTime  time.Duration `json:"jobExcuteTime"`
+	JobStartTime   time.Duration `json:"jobStartTime"`
 	JobEndTime     time.Duration `json:"jobEndTime"`
 }
 
 // 批量日志
 type LogBatch struct {
 	Logs []interface{}
+}
+
+// 查询日志过滤参数
+type FindByJobName struct {
+	JobName string `bson:"jobName"`
+}
+
+// 查询日志排序参数
+type SortLogByStartTime struct {
+	SortOrder int `bson:"startTime"`
 }
 
 /*
@@ -95,7 +105,7 @@ func BuildLogRecord(jobResult *JobExcuteResult) (jobRecord *LogRecord) {
 		OutPut:         string(jobResult.OutPut),
 		JobPlanTime:    time.Duration(jobResult.JobState.JobPlanStartTime.UnixNano() / 1000 / 1000),
 		JobSchduleTime: time.Duration(jobResult.JobState.JobRealStartTime.UnixNano() / 1000 / 1000),
-		JobExcuteTime:  time.Duration(jobResult.StartTime.UnixNano() / 1000 / 1000),
+		JobStartTime:   time.Duration(jobResult.StartTime.UnixNano() / 1000 / 1000),
 		JobEndTime:     time.Duration(jobResult.EndTime.UnixNano() / 1000 / 1000),
 	}
 	return

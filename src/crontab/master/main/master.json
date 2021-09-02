@@ -3,5 +3,9 @@
     "readTimeout": 5000,
     "writeTimeout":5000,
     "endpoints": ["47.93.208.134:2379"],
-    "dialTimeout": 3000
+    "dialTimeout": 3000,
+    "mongodbUrl": "mongodb://root:123456@47.93.208.134:27017",
+    "mongodbTimeout": 3000,
+    "mongodbName": "cron",
+    "mongodbCollectionName":"log"
 }

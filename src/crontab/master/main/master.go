@@ -23,6 +23,10 @@ func main() {
 	if err = master.InitJobMgr(); err != nil {
 		fmt.Println(err)
 	}
+	// 初始化日志管理器
+	if err = master.InitLogMgr(); err != nil {
+		fmt.Println(err)
+	}
 
 	// 初始化apiserver
 	if err = master.InitApiServer(); err != nil {

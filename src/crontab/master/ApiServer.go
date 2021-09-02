@@ -35,6 +35,7 @@ func handleJobSave(res http.ResponseWriter, req *http.Request) {
 	if err = json.Unmarshal([]byte(reqData), job); err != nil {
 		goto Err
 	}
+	fmt.Println("save:", *job)
 	// 保存job
 	if job, err = GOL_JOBMGR.SaveJob(job); err != nil {
 		fmt.Println("ERROR", err)
@@ -63,7 +64,8 @@ func handleJobDel(res http.ResponseWriter, req *http.Request) {
 		goto Err
 	}
 	//获取job名称
-	name = req.PostForm.Get("name")
+	name = req.PostForm.Get("jobName")
+	fmt.Println("del:", name)
 
 	// 删除job
 	if oldJob, err = GOL_JOBMGR.DelJob(name); err != nil {
@@ -113,7 +115,8 @@ func handleJobKill(res http.ResponseWriter, req *http.Request) {
 		goto Err
 	}
 	//获取job名称
-	name = req.PostForm.Get("name")
+	name = req.PostForm.Get("jobName")
+	fmt.Println("kill:", name)
 
 	//杀死任务
 	if err = GOL_JOBMGR.KillJob(name); err != nil {
@@ -130,6 +133,50 @@ Err:
 		res.Write(result)
 	}
 }
+
+func handleJobLog(res http.ResponseWriter, req *http.Request) {
+	var (
+		err        error
+		name       string
+		limitParam string
+		startParam string
+		start      int
+		limit      int
+		logs       []*common.LogRecord
+		result     []byte
+	)
+	if err = req.ParseForm(); err != nil {
+		goto Err
+	}
+	name = req.Form.Get("jobName")
+	startParam = req.Form.Get("start")
+	limitParam = req.Form.Get("limit")
+	// fmt.Println("log:", name, startParam, limitParam)
+
+	// 字符串转换位置整形,转换出错则使用默认值
+	if start, err = strconv.Atoi(startParam); err != nil {
+		start = 1
+	}
+	if limit, err = strconv.Atoi(limitParam); err != nil {
+		limit = 10
+	}
+	//
+	if logs, err = GOL_LOGMGR.FindByName(name, start, limit); err != nil {
+		goto Err
+	}
+	// 构造响应
+	if result, err = common.BuildResponse(200, "success", logs); err == nil {
+		res.Write(result)
+	}
+	return
+
+Err:
+	// 构造响应
+	if result, err = common.BuildResponse(-1, err.Error(), nil); err == nil {
+		res.Write(result)
+	}
+	return
+}
 func InitApiServer() (err error) {
 	var (
 		serverMux        *http.ServeMux
@@ -145,6 +192,7 @@ func InitApiServer() (err error) {
 	serverMux.HandleFunc("/cron/job/delete", handleJobDel)
 	serverMux.HandleFunc("/cron/job/list", handleJobList)
 	serverMux.HandleFunc("/cron/job/kill", handleJobKill)
+	serverMux.HandleFunc("/cron/job/log", handleJobLog)
 
 	//静态文件目录
 	staticDir = http.Dir("./webroot")
