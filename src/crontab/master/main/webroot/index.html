@@ -273,7 +273,7 @@
 
                 // 拉取节点
                 $.ajax({
-                    url: '/worker/list',
+                    url: 'cron/worker/list',
                     dataType: 'json',
                     success: function(resp) {
                         if (resp.code != 200) {

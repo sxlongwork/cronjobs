@@ -70,14 +70,14 @@ type JobExcuteResult struct {
 日志结构
 */
 type LogRecord struct {
-	JobName        string        `json:"jobName"`
-	Command        string        `json:"command"`
-	OutPut         string        `json:"outPut"`
-	Err            string        `json:"err"`
-	JobPlanTime    time.Duration `json:"jobPlanTime"`
-	JobSchduleTime time.Duration `josn:"jobSchduleTime"`
-	JobStartTime   time.Duration `json:"jobStartTime"`
-	JobEndTime     time.Duration `json:"jobEndTime"`
+	JobName        string        `json:"jobName" bson:"jobName"`
+	Command        string        `json:"command" bson:"command"`
+	OutPut         string        `json:"outPut" bson:"outPut"`
+	Err            string        `json:"err" bson:"err"`
+	JobPlanTime    time.Duration `json:"jobPlanTime" bson:"jobPlanTime"`
+	JobSchduleTime time.Duration `josn:"jobSchduleTime" bosn:"jobSchduleTime"`
+	JobStartTime   time.Duration `json:"jobStartTime" bson:"jobStartTime"`
+	JobEndTime     time.Duration `json:"jobEndTime" bson:"jobEndTime"`
 }
 
 // 批量日志

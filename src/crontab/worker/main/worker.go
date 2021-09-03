@@ -21,6 +21,11 @@ func main() {
 		fmt.Println("load config failed.", err)
 	}
 
+	// worker注册
+	if err = worker.InitRegister(); err != nil {
+		fmt.Println(err)
+	}
+
 	// 启动日志协程
 	if err = worker.InitLogMgr(); err != nil {
 		fmt.Println(err)
