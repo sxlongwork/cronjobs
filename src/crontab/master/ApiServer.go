@@ -177,6 +177,28 @@ Err:
 	}
 	return
 }
+
+func handleWorkerList(res http.ResponseWriter, req *http.Request) {
+	var (
+		err     error
+		workers []string
+		result  []byte
+	)
+	// 获取worker列表
+	if workers, err = GOL_WORKERMGR.GetWorkerList(); err != nil {
+		goto Err
+	}
+	// 获取成功，构造成功响应
+	if result, err = common.BuildResponse(200, "success", workers); err == nil {
+		res.Write(result)
+	}
+	return
+Err:
+	// 获取失败，构造失败响应
+	if result, err = common.BuildResponse(-1, err.Error(), nil); err == nil {
+		res.Write(result)
+	}
+}
 func InitApiServer() (err error) {
 	var (
 		serverMux        *http.ServeMux
@@ -193,6 +215,7 @@ func InitApiServer() (err error) {
 	serverMux.HandleFunc("/cron/job/list", handleJobList)
 	serverMux.HandleFunc("/cron/job/kill", handleJobKill)
 	serverMux.HandleFunc("/cron/job/log", handleJobLog)
+	serverMux.HandleFunc("/cron/worker/list", handleWorkerList)
 
 	//静态文件目录
 	staticDir = http.Dir("./webroot")

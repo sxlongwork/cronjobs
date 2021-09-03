@@ -75,7 +75,7 @@ type LogRecord struct {
 	OutPut         string        `json:"outPut" bson:"outPut"`
 	Err            string        `json:"err" bson:"err"`
 	JobPlanTime    time.Duration `json:"jobPlanTime" bson:"jobPlanTime"`
-	JobSchduleTime time.Duration `josn:"jobSchduleTime" bosn:"jobSchduleTime"`
+	JobSchduleTime time.Duration `json:"jobSchduleTime" bson:"jobSchduleTime"`
 	JobStartTime   time.Duration `json:"jobStartTime" bson:"jobStartTime"`
 	JobEndTime     time.Duration `json:"jobEndTime" bson:"jobEndTime"`
 }
@@ -175,12 +175,7 @@ func Unmarshal(bytes []byte) (job *Job, err error) {
 	return
 }
 
-// 根据key获取任务名
-func GetJobSaveName(key string) (name string) {
-	return strings.TrimLeft(key, JOB_SAVE_DIR)
-}
-
-// 根据key获取任务名
-func GetJobKillName(key string) (name string) {
-	return strings.TrimLeft(key, JOB_KILL_DIR)
+// 根据key获取去掉指定前缀
+func GetSuffixName(key string, prefix string) (name string) {
+	return strings.TrimPrefix(key, prefix)
 }

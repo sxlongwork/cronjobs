@@ -165,8 +165,8 @@
                 var hour = paddingNum(date.getHours(), 2)
                 var minute = paddingNum(date.getMinutes(), 2)
                 var second = paddingNum(date.getSeconds(), 2)
-                var millsecond = paddingNum(date.getMilliseconds(), 3)
-                return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "." + millsecond
+                var misecond = paddingNum(date.getMilliseconds(), 3)
+                return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + "." + misecond
             }
 
             // 1, 绑定按钮的事件处理函数
@@ -248,6 +248,7 @@
                         var logList = resp.data
                         for (var i = 0; i < logList.length; ++i) {
                             var log = logList[i]
+                            // console.log(log)
                             var tr = $('<tr>')
                             tr.append($('<td>').html(log.command))
                             tr.append($('<td>').html(log.err))
@@ -256,7 +257,7 @@
                             tr.append($('<td>').html(timeFormat(log.jobSchduleTime)))
                             tr.append($('<td>').html(timeFormat(log.jobStartTime)))
                             tr.append($('<td>').html(timeFormat(log.jobEndTime)))
-                            console.log(tr)
+                            // console.log(tr)
                             $('#log-list tbody').append(tr)
                         }
                     }

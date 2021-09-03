@@ -104,7 +104,7 @@ func (jobMgr *JobMgr) WatchJobs() (err error) {
 					jobEvent = common.BuildJobEvent(common.JOB_PUT_EVENT, job)
 				case clientv3.EventTypeDelete:
 					// DELETE操作
-					jobName = common.GetJobSaveName(string(event.Kv.Key))
+					jobName = common.GetSuffixName(string(event.Kv.Key), common.JOB_SAVE_DIR)
 					job = &common.Job{JobName: jobName}
 					// 构建event，将job推送给调度协程
 					jobEvent = common.BuildJobEvent(common.JOB_DEL_EVENT, job)
@@ -140,7 +140,7 @@ func (jobMgr *JobMgr) watchKillJob() (err error) {
 				switch event.Type {
 				case clientv3.EventTypePut:
 
-					job = &common.Job{JobName: common.GetJobKillName(string(event.Kv.Key))}
+					job = &common.Job{JobName: common.GetSuffixName(string(event.Kv.Key), common.JOB_KILL_DIR)}
 					// 构建event，将job推送给调度协程
 					jobEvent = common.BuildJobEvent(common.JOB_KILL_EVENT, job)
 					// 推送jobEvent到调度协程
