@@ -116,7 +116,7 @@ func getLocalIp() (ipv4 string, err error) {
 		if ipNet, isIpNet = netAddr.(*net.IPNet); isIpNet && !ipNet.IP.IsLoopback() {
 			// 跳过ipv6
 			if ipNet.IP.To4() != nil {
-				ipv4 = ipNet.String() // 192.168.10.10
+				ipv4 = ipNet.IP.String() // 192.168.10.10
 				return
 			}
 		}
