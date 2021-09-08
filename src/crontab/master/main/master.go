@@ -4,7 +4,7 @@ import (
 	"cronjobs/src/crontab/master"
 	"cronjobs/src/crontab/master/config"
 	"flag"
-	"fmt"
+	"log"
 )
 
 func main() {
@@ -17,25 +17,25 @@ func main() {
 
 	// 初始化配置
 	if err = config.InitConfig(configPath); err != nil {
-		fmt.Println("load config failed.", err)
+		log.Println(err)
 	}
 
 	// 初始化workerMgr
 	if err = master.InitWorkerMgr(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	// 初始化jobMgr, etcd信息
 	if err = master.InitJobMgr(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	// 初始化日志管理器
 	if err = master.InitLogMgr(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	// 初始化apiserver
 	if err = master.InitApiServer(); err != nil {
-		fmt.Println("start api server failed", err)
+		log.Println("start api server failed", err)
 	}
 	select {}
 

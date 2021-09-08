@@ -4,6 +4,7 @@ import (
 	"context"
 	"cronjobs/src/crontab/common"
 	"cronjobs/src/crontab/worker/config"
+	"log"
 	"net"
 	"time"
 
@@ -20,6 +21,9 @@ type RegisterWorker struct {
 	localIp string
 }
 
+/*
+初始化注册实例，并启动注册协程
+*/
 func InitRegister() (err error) {
 	var (
 		cfg     clientv3.Config
@@ -51,6 +55,9 @@ func InitRegister() (err error) {
 	return
 }
 
+/*
+worker 注册
+*/
 func (regis *RegisterWorker) register() (err error) {
 	var (
 		registerKey   string
@@ -61,8 +68,10 @@ func (regis *RegisterWorker) register() (err error) {
 		cancelFunc    context.CancelFunc
 	)
 	cancelFunc = nil
+	// 注册地址:/cron/worker/ + workerNodeIP
 	registerKey = common.WORKER_REGISTER_DIR + regis.localIp
 
+	// 注册失败会一直重试
 	for {
 		// 申请租约
 		if grantRes, err = regis.lease.Grant(context.TODO(), 10); err != nil {
@@ -79,6 +88,7 @@ func (regis *RegisterWorker) register() (err error) {
 		if _, err = regis.kv.Put(ctx, registerKey, "", clientv3.WithLease(grantRes.ID)); err != nil {
 			goto RETRY
 		}
+		log.Printf("register worker node %s success\n", regis.localIp)
 		// 处理续租应答
 		for {
 			select {
@@ -90,6 +100,7 @@ func (regis *RegisterWorker) register() (err error) {
 		}
 
 	RETRY:
+		log.Println("register worker node error. we will try again after 1 second ...")
 		time.Sleep(1 * time.Second)
 		if cancelFunc != nil {
 			cancelFunc()
@@ -98,6 +109,9 @@ func (regis *RegisterWorker) register() (err error) {
 
 }
 
+/*
+获取本地worker节点IPV4地址，如果有多个网卡，只获取第一个
+*/
 func getLocalIp() (ipv4 string, err error) {
 
 	var (

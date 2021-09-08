@@ -4,7 +4,7 @@ import (
 	"cronjobs/src/crontab/common"
 	"cronjobs/src/crontab/master/config"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -35,12 +35,13 @@ func handleJobSave(res http.ResponseWriter, req *http.Request) {
 	if err = json.Unmarshal([]byte(reqData), job); err != nil {
 		goto Err
 	}
-	fmt.Println("save:", *job)
+	// fmt.Println("save:", *job)
 	// 保存job
 	if job, err = GOL_JOBMGR.SaveJob(job); err != nil {
-		fmt.Println("ERROR", err)
+		log.Printf("save job %s ERROR %v.\n", job.JobName, err)
 		goto Err
 	}
+	log.Printf("save job %s success.\n", job.JobName)
 
 	// 构造响应
 	if result, err = common.BuildResponse(200, "success", job); err == nil {
@@ -65,12 +66,15 @@ func handleJobDel(res http.ResponseWriter, req *http.Request) {
 	}
 	//获取job名称
 	name = req.PostForm.Get("jobName")
-	fmt.Println("del:", name)
+	// fmt.Println("del:", name)
 
 	// 删除job
 	if oldJob, err = GOL_JOBMGR.DelJob(name); err != nil {
+		log.Printf("delete job %s ERROR %v.\n", name, err)
 		goto Err
 	}
+	log.Printf("delete job %s success.\n", name)
+
 	// 构造响应
 	if result, err = common.BuildResponse(200, "success", oldJob); err == nil {
 		res.Write(result)
@@ -116,12 +120,14 @@ func handleJobKill(res http.ResponseWriter, req *http.Request) {
 	}
 	//获取job名称
 	name = req.PostForm.Get("jobName")
-	fmt.Println("kill:", name)
+	// fmt.Println("kill:", name)
 
 	//杀死任务
 	if err = GOL_JOBMGR.KillJob(name); err != nil {
 		goto Err
 	}
+
+	log.Printf("kill job %s success.\n", name)
 	// 构造响应
 	if result, err = common.BuildResponse(200, "success", nil); err == nil {
 		res.Write(result)

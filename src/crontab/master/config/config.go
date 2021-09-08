@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 )
 
 var (
@@ -26,11 +27,14 @@ func InitConfig(path string) (err error) {
 		data []byte
 	)
 	if data, err = ioutil.ReadFile(path); err != nil {
+		log.Printf("load config file %s error.\n", path)
 		return
 	}
 	if err = json.Unmarshal(data, GOL_CONFIG); err != nil {
+		log.Println("parse data to struct Config failed.")
 		return
 	}
 	// fmt.Println(*GOL_CONFIG)
+	log.Println("load config file success.")
 	return
 }

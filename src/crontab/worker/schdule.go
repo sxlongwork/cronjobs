@@ -2,7 +2,7 @@ package worker
 
 import (
 	"cronjobs/src/crontab/common"
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -36,15 +36,18 @@ func (schdule *SchduleJob) handleJobEvent(jobevent *common.JobEvent) {
 		}
 		// 将任务添加到调度计划表中
 		schdule.JobPlans[jobevent.Job.JobName] = schduleJobPlan
+		log.Printf("add job %s to jobPlans map.\n", jobevent.Job.JobName)
 	case common.JOB_DEL_EVENT: // 删除任务事件
 		// 判断任务是否在调度计划表中，在的话就删除它
 		if schduleJobPlan, jobPlanExists = schdule.JobPlans[jobevent.Job.JobName]; jobPlanExists {
 			delete(schdule.JobPlans, jobevent.Job.JobName)
+			log.Printf("delete job %s from jobPlans map.\n", jobevent.Job.JobName)
 		}
 	case common.JOB_KILL_EVENT: // 强杀任务事件
 		// 判断任务是否在执行中，是就杀掉它
 		if jobState, jobExcing = schdule.JobStates[jobevent.Job.JobName]; jobExcing {
 			jobState.CancelFunc()
+			log.Printf("killed job %s which is running now.\n", jobevent.Job.JobName)
 			return
 		}
 
@@ -64,7 +67,8 @@ func (schdule *SchduleJob) tryStartSchdule(jobPlan *common.SchduleJobPlan) {
 	jobState = common.BuildJobState(*jobPlan)
 	// 判断任务执行状态，任务在执行中跳过
 	if _, jobExcing = schdule.JobStates[jobPlan.Job.JobName]; jobExcing {
-		fmt.Println(jobState.Job.JobName, "正在执行")
+		// fmt.Println(jobState.Job.JobName, "正在执行")
+		log.Printf("%s is already running.\n", jobPlan.Job.JobName)
 		return
 	}
 	// 如任务没有在执行中状态，就加它入之中执行map中
@@ -121,7 +125,7 @@ func (schdule *SchduleJob) handleJobResult(jobResult *common.JobExcuteResult) {
 	)
 	// 任务执行完成从执行map中删除
 	delete(schdule.JobStates, jobResult.JobState.Job.JobName)
-	fmt.Println(jobResult.JobState.Job.JobName, "执行完成，执行结果=", string(jobResult.OutPut), "执行错误=", jobResult.Err.Error())
+	log.Println(jobResult.JobState.Job.JobName, "执行完成，执行结果=", string(jobResult.OutPut), "执行错误=", jobResult.Err.Error())
 	// 将任务执行结果生成对应日志记录
 	if jobResult.Err != common.TRY_LOCK_ERROR {
 		jobRecord = common.BuildLogRecord(jobResult)
@@ -172,7 +176,7 @@ func (schdule *SchduleJob) scanJobsLoop() {
 /*
 调度管理器初始化
 */
-func InitSchduleMgr() {
+func InitSchduleMgr() (err error) {
 	var (
 		jobEvent  chan *common.JobEvent
 		jobPlans  map[string]*common.SchduleJobPlan
@@ -191,6 +195,8 @@ func InitSchduleMgr() {
 	}
 	// 启动调度协程
 	go GOL_SCHDULE.scanJobsLoop()
+	log.Println("job schdule server has started.")
+	return
 }
 
 /*

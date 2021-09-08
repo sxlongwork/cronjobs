@@ -4,6 +4,7 @@ import (
 	"context"
 	"cronjobs/src/crontab/common"
 	"cronjobs/src/crontab/worker/config"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -74,7 +75,7 @@ func (logMgr *LogMgr) scanLogRecord() {
 }
 
 /*
-初始化实例
+初始化日志管理实例
 */
 func InitLogMgr() (err error) {
 	var (
@@ -93,13 +94,14 @@ func InitLogMgr() (err error) {
 		collection: col,
 		autoCommit: make(chan *common.LogBatch, 1000),
 	}
-	// 启动日志记录管道
+	// 启动日志记录协程
 	go GOL_LOGRECOEDMGR.scanLogRecord()
+	log.Println("write log goroutine has started")
 	return
 }
 
 /*
-将日志记录放入管道中
+将日志记录推送到管道中
 */
 func (logMgr *LogMgr) PutJobLog(logRecord *common.LogRecord) {
 	logMgr.logRecords <- logRecord

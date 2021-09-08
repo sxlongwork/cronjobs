@@ -2,6 +2,7 @@ package worker
 
 import (
 	"cronjobs/src/crontab/common"
+	"log"
 	"math/rand"
 	"os/exec"
 	"time"
@@ -43,7 +44,7 @@ func (excutor *JobExcutor) ExcuteJob(jobExcuteState *common.JobExecuteState) {
 		jobExcuteResult.OutPut = nil
 		jobExcuteResult.EndTime = time.Now()
 	} else {
-
+		log.Printf("start to execute job %s.\n", jobExcuteState.Job.JobName)
 		// 执行命令并捕获结果
 		cmd = exec.CommandContext(jobExcuteState.Ctx, "/bin/bash", "-c", jobExcuteState.Job.Command)
 		if outPut, err = cmd.CombinedOutput(); err != nil {
