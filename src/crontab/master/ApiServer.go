@@ -16,6 +16,9 @@ type ApiServer struct {
 
 var GOL_HTTPSERVER *ApiServer
 
+/*
+保存任务：新增或修改
+*/
 func handleJobSave(res http.ResponseWriter, req *http.Request) {
 
 	var (
@@ -54,6 +57,9 @@ Err:
 	}
 }
 
+/*
+删除任务
+*/
 func handleJobDel(res http.ResponseWriter, req *http.Request) {
 	var (
 		err    error
@@ -87,6 +93,9 @@ Err:
 	}
 }
 
+/*
+查询任务列表
+*/
 func handleJobList(res http.ResponseWriter, req *http.Request) {
 	var (
 		err    error
@@ -109,6 +118,9 @@ Err:
 	}
 }
 
+/*
+杀死任务，终止正在执行的任务
+*/
 func handleJobKill(res http.ResponseWriter, req *http.Request) {
 	var (
 		err    error
@@ -140,6 +152,9 @@ Err:
 	}
 }
 
+/*
+查询任务执行日志
+*/
 func handleJobLog(res http.ResponseWriter, req *http.Request) {
 	var (
 		err        error
@@ -184,6 +199,9 @@ Err:
 	return
 }
 
+/*
+查询注册的worker节点
+*/
 func handleWorkerList(res http.ResponseWriter, req *http.Request) {
 	var (
 		err     error

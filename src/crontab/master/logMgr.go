@@ -36,6 +36,9 @@ func InitLogMgr() (err error) {
 	return
 }
 
+/*
+根据任务名称查询任务执行日志
+*/
 func (logMgr *LogMgr) FindByName(name string, start int, limit int) (logArr []*common.LogRecord, err error) {
 	var (
 		findByName *common.FindByJobName
@@ -72,6 +75,9 @@ func (logMgr *LogMgr) FindByName(name string, start int, limit int) (logArr []*c
 	return
 }
 
+/*
+根据任务名称清理任务日志
+*/
 func (logMgr *LogMgr) ClearJobLogs(name string) (err error) {
 	var (
 		findByName *common.FindByJobName

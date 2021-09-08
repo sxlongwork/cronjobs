@@ -16,6 +16,9 @@ type JobLock struct {
 	isLocked   bool
 }
 
+/*
+初始化锁
+*/
 func InitLock(jobName string, kv clientv3.KV, lease clientv3.Lease) (lock *JobLock) {
 	lock = &JobLock{
 		jobName: jobName,
@@ -25,6 +28,9 @@ func InitLock(jobName string, kv clientv3.KV, lease clientv3.Lease) (lock *JobLo
 	return
 }
 
+/*
+抢锁
+*/
 func (lock *JobLock) TryLock() (err error) {
 	var (
 		leaseGrantRes          *clientv3.LeaseGrantResponse
@@ -88,6 +94,9 @@ ERR:
 	return
 }
 
+/*
+释放锁
+*/
 func (lock *JobLock) Unlock() {
 	if lock.isLocked {
 		lock.cancelFunc()

@@ -42,6 +42,9 @@ func InitWorkerMgr() (err error) {
 	return
 }
 
+/*
+获取worker节点列表
+*/
 func (worker *WorkerMgr) GetWorkerList() (workerList []string, err error) {
 	var (
 		getRes *clientv3.GetResponse

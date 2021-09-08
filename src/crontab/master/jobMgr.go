@@ -42,6 +42,9 @@ func InitJobMgr() (err error) {
 	return
 }
 
+/*
+保存任务
+*/
 func (jobMgr *JobMgr) SaveJob(job *common.Job) (err error) {
 	var (
 		key  string
@@ -58,6 +61,9 @@ func (jobMgr *JobMgr) SaveJob(job *common.Job) (err error) {
 	return
 }
 
+/*
+删除任务
+*/
 func (jobMgr *JobMgr) DelJob(name string) (oldJob *common.Job, err error) {
 
 	var (
@@ -79,6 +85,9 @@ func (jobMgr *JobMgr) DelJob(name string) (oldJob *common.Job, err error) {
 	return
 }
 
+/*
+查询任务列表
+*/
 func (JobMgr *JobMgr) ListJob() (jobs []*common.Job, err error) {
 	//
 	var (
@@ -107,6 +116,9 @@ func (JobMgr *JobMgr) ListJob() (jobs []*common.Job, err error) {
 	return
 }
 
+/*
+杀死任务
+*/
 func (JobMgr *JobMgr) KillJob(name string) (err error) {
 	// 将需要杀掉的任务名称存储到/cron/kill/目录下即可，worker中有协程会监听这个目录
 	var (
