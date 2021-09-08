@@ -205,6 +205,41 @@ Err:
 		res.Write(result)
 	}
 }
+
+/*
+清理任务日志
+*/
+func handleJobLogClear(res http.ResponseWriter, req *http.Request) {
+	var (
+		err    error
+		name   string
+		result []byte
+	)
+	if err = req.ParseForm(); err != nil {
+		goto Err
+	}
+	//获取job名称
+	name = req.PostForm.Get("jobName")
+	// fmt.Println("kill:", name)
+
+	//清除任务日志
+	if err = GOL_LOGMGR.ClearJobLogs(name); err != nil {
+		goto Err
+	}
+
+	log.Printf("clear job %s logs success.\n", name)
+	// 构造响应
+	if result, err = common.BuildResponse(200, "success", nil); err == nil {
+		res.Write(result)
+	}
+	return
+Err:
+	// 构造响应
+	if result, err = common.BuildResponse(-1, err.Error(), nil); err == nil {
+		res.Write(result)
+	}
+}
+
 func InitApiServer() (err error) {
 	var (
 		serverMux        *http.ServeMux
@@ -222,6 +257,7 @@ func InitApiServer() (err error) {
 	serverMux.HandleFunc("/cron/job/kill", handleJobKill)
 	serverMux.HandleFunc("/cron/job/log", handleJobLog)
 	serverMux.HandleFunc("/cron/worker/list", handleWorkerList)
+	serverMux.HandleFunc("/cron/job/log/clear", handleJobLogClear)
 
 	//静态文件目录
 	staticDir = http.Dir("./webroot")

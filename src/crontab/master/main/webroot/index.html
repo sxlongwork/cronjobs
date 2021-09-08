@@ -220,6 +220,20 @@
                     }
                 })
             })
+            // 清除任务日志
+            $("#job-list").on("click", ".clear-log", function(event) { // javascript bind
+                var jobName = $(this).parents("tr").children(".job-name").text()
+                $.ajax({
+                    url: '/cron/job/log/clear',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {jobName: jobName},
+                    complete: function() {
+                        window.location.reload()
+                    }
+                })
+            })
+
             // 新建任务
             $('#new-job').on('click', function() {
                 $('#edit-name').val("")
@@ -323,6 +337,7 @@
                                     .append('<button class="btn btn-danger delete-job">删除</button>')
                                     .append('<button class="btn btn-warning kill-job">强杀</button>')
                                     .append('<button class="btn btn-success log-job">日志</button>')
+                                    .append('<button class="btn btn-warning clear-log">清除日志</button>')
                             tr.append($('<td>').append(toolbar))
                             $("#job-list tbody").append(tr)
                         }

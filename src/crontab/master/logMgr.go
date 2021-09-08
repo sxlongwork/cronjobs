@@ -4,6 +4,7 @@ import (
 	"context"
 	"cronjobs/src/crontab/common"
 	"cronjobs/src/crontab/master/config"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -67,6 +68,26 @@ func (logMgr *LogMgr) FindByName(name string, start int, limit int) (logArr []*c
 
 		logArr = append(logArr, logRecord)
 	}
+
+	return
+}
+
+func (logMgr *LogMgr) ClearJobLogs(name string) (err error) {
+	var (
+		findByName *common.FindByJobName
+		delRes     *mongo.DeleteResult
+	)
+
+	//  日志名称过滤参数
+	findByName = &common.FindByJobName{
+		JobName: name,
+	}
+
+	if delRes, err = logMgr.collection.DeleteMany(context.TODO(), findByName); err != nil {
+		log.Println("delete job logs error.", err)
+		return
+	}
+	log.Printf("delete job %s logs success,total %d logs record.\n", name, delRes.DeletedCount)
 
 	return
 }
