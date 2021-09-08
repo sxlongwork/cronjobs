@@ -92,7 +92,7 @@ type FindByJobName struct {
 
 // 查询日志排序参数
 type SortLogByStartTime struct {
-	SortOrder int `bson:"startTime"`
+	SortOrder int `bson:"jobStartTime"`
 }
 
 /*

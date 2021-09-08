@@ -125,7 +125,7 @@ func (schdule *SchduleJob) handleJobResult(jobResult *common.JobExcuteResult) {
 	)
 	// 任务执行完成从执行map中删除
 	delete(schdule.JobStates, jobResult.JobState.Job.JobName)
-	log.Println(jobResult.JobState.Job.JobName, "执行完成，执行结果=", string(jobResult.OutPut), "执行错误=", jobResult.Err.Error())
+	log.Println(jobResult.JobState.Job.JobName, "执行完成，执行结果=", string(jobResult.OutPut), "执行错误=", jobResult.Err)
 	// 将任务执行结果生成对应日志记录
 	if jobResult.Err != common.TRY_LOCK_ERROR {
 		jobRecord = common.BuildLogRecord(jobResult)
