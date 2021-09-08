@@ -78,7 +78,7 @@ func (logMgr *LogMgr) FindByName(name string, start int, limit int) (logArr []*c
 /*
 根据任务名称清理任务日志
 */
-func (logMgr *LogMgr) ClearJobLogs(name string) (err error) {
+func (logMgr *LogMgr) ClearJobLogs(name string) (err error, count int64) {
 	var (
 		findByName *common.FindByJobName
 		delRes     *mongo.DeleteResult
@@ -93,7 +93,6 @@ func (logMgr *LogMgr) ClearJobLogs(name string) (err error) {
 		log.Println("delete job logs error.", err)
 		return
 	}
-	log.Printf("delete job %s logs success,total %d logs record.\n", name, delRes.DeletedCount)
-
+	count = delRes.DeletedCount
 	return
 }

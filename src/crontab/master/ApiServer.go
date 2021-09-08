@@ -232,6 +232,7 @@ func handleJobLogClear(res http.ResponseWriter, req *http.Request) {
 		err    error
 		name   string
 		result []byte
+		count  int64
 	)
 	if err = req.ParseForm(); err != nil {
 		goto Err
@@ -241,11 +242,11 @@ func handleJobLogClear(res http.ResponseWriter, req *http.Request) {
 	// fmt.Println("kill:", name)
 
 	//清除任务日志
-	if err = GOL_LOGMGR.ClearJobLogs(name); err != nil {
+	if err, count = GOL_LOGMGR.ClearJobLogs(name); err != nil {
 		goto Err
 	}
 
-	log.Printf("clear job %s logs success.\n", name)
+	log.Printf("clear job %s logs success, total %d log records\n", name, count)
 	// 构造响应
 	if result, err = common.BuildResponse(200, "success", nil); err == nil {
 		res.Write(result)
