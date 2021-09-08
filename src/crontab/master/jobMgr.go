@@ -42,26 +42,18 @@ func InitJobMgr() (err error) {
 	return
 }
 
-func (jobMgr *JobMgr) SaveJob(job *common.Job) (oldJob *common.Job, err error) {
+func (jobMgr *JobMgr) SaveJob(job *common.Job) (err error) {
 	var (
-		key    string
-		putRes *clientv3.PutResponse
-		data   []byte
+		key  string
+		data []byte
 	)
 	key = common.JOB_SAVE_DIR + job.JobName
 	if data, err = json.Marshal(job); err != nil {
 		return
 	}
 
-	if putRes, err = jobMgr.kv.Put(context.TODO(), key, string(data), clientv3.WithPrevKV()); err != nil {
+	if _, err = jobMgr.kv.Put(context.TODO(), key, string(data), clientv3.WithPrevKV()); err != nil {
 		return
-	}
-
-	if putRes.PrevKv != nil {
-		oldJob = &common.Job{}
-		if err = json.Unmarshal(putRes.PrevKv.Value, oldJob); err != nil {
-			return
-		}
 	}
 	return
 }

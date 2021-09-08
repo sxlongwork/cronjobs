@@ -37,7 +37,7 @@ func handleJobSave(res http.ResponseWriter, req *http.Request) {
 	}
 	// fmt.Println("save:", *job)
 	// 保存job
-	if job, err = GOL_JOBMGR.SaveJob(job); err != nil {
+	if err = GOL_JOBMGR.SaveJob(job); err != nil {
 		log.Printf("save job %s ERROR %v.\n", job.JobName, err)
 		goto Err
 	}
@@ -241,5 +241,6 @@ func InitApiServer() (err error) {
 	go func() {
 		err = GOL_HTTPSERVER.httpServer.ListenAndServe()
 	}()
+	log.Printf("start listening server in :%d\n", config.GOL_CONFIG.ServerPort)
 	return
 }
